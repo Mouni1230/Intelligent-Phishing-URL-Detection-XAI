@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Phishing URL Detector",
+  "version": "1.0",
+  "description": "Real-time phishing detection with automatic alerts",
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting",
+    "windows"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "🛡️ Phishing Detector"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["popup-alert.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

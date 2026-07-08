@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phishing Detector</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      width: 500px;
+      min-height: 400px;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 20px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .url-section {
+      margin-bottom: 20px;
+    }
+
+    .url-section h3 {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .url-box {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #333;
+      word-break: break-all;
+      border-left: 4px solid #667eea;
+    }
+
+    .analysis-section {
+      margin: 20px 0;
+    }
+
+    .verdict {
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .verdict.safe {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #28a745;
+    }
+
+    .verdict.phishing {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5222d;
+    }
+
+    .verdict.medium {
+      background: #fff3cd;
+      color: #856404;
+      border: 2px solid #ffc107;
+    }
+
+    .confidence {
+      margin: 12px 0;
+      font-size: 13px;
+    }
+
+    .confidence-bar {
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .indicators-section {
+      margin: 16px 0;
+    }
+
+    .indicators-section h4 {
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .indicator-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .indicator-item {
+      padding: 8px;
+      margin: 6px 0;
+      background: #f9f9f9;
+      border-left: 3px solid #667eea;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #444;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .indicator-item.critical {
+      background: #ffebee;
+      border-left-color: #f5222d;
+      color: #c41d1d;
+    }
+
+    .indicator-item.warning {
+      background: #fff3e0;
+      border-left-color: #ffa500;
+      color: #cc6600;
+    }
+
+    .indicator-item.safe {
+      background: #e8f5e9;
+      border-left-color: #28a745;
+      color: #1e5620;
+    }
+
+    .indicator-icon {
+      font-size: 14px;
+    }
+
+    .details-box {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #eee;
+      background: #f9f9f9;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      background: white;
+    }
+
+    .tab-btn:hover {
+      background: white;
+    }
+
+    .tab-content {
+      padding: 16px;
+      display: none;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .feature-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+    }
+
+    .feature-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .feature-value {
+      color: #666;
+    }
+
+    .scan-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .scan-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #667eea;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .history-item {
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .history-item:hover {
+      background: #f5f5f5;
+      border-color: #667eea;
+    }
+
+    .history-item.phishing {
+      background: #ffebee;
+      border-color: #f5222d;
+    }
+
+    .history-item.safe {
+      background: #e8f5e9;
+      border-color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛡️ Phishing Detector</h1>
+      <p>Real-time URL Safety Analysis with XAI</p>
+    </div>
+
+    <div id="mainAnalysis">
+      <div class="content">
+        <div class="url-section">
+          <h3>Current Page</h3>
+          <div class="url-box" id="urlDisplay">Loading...</div>
+        </div>
+
+        <div id="analysisResult" style="display: none;">
+          <div class="verdict" id="verdictBox"></div>
+
+          <div class="confidence">
+            <strong>Detection Confidence</strong>
+            <div class="confidence-bar">
+              <div class="confidence-fill" id="confidenceFill"></div>
+            </div>
+          </div>
+
+          <div class="indicators-section">
+            <h4>🔍 URL Analysis Details</h4>
+            <ul class="indicator-list" id="indicatorsList"></ul>
+          </div>
+
+          <div class="details-box">
+            <strong>📋 Technical Analysis</strong>
+            <div id="technicalDetails" style="margin-top: 8px; font-size: 11px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="scan">Scan URL</button>
+        <button class="tab-btn" data-tab="analysis">Features</button>
+        <button class="tab-btn" data-tab="history">History</button>
+      </div>
+
+      <!-- Scan Tab -->
+      <div id="scan" class="tab-content active">
+        <div class="scan-input-group">
+          <input type="text" id="urlInput" class="scan-input" placeholder="Enter URL to scan...">
+          <button class="btn btn-primary" id="scanBtn">Scan</button>
+        </div>
+        <div id="scanResult"></div>
+      </div>
+
+      <!-- Analysis Tab -->
+      <div id="analysis" class="tab-content">
+        <div id="featuresList"></div>
+      </div>
+
+      <!-- History Tab -->
+      <div id="history" class="tab-content">
+        <div id="historyList">No scan history yet</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Phishing Alert - Security Warning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .alert-header {
+            padding: 30px;
+            color: white;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .alert-header.phishing {
+            background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+        }
+
+        .alert-header.medium {
+            background: linear-gradient(135deg, #FFA500 0%, #FF6600 100%);
+        }
+
+        .alert-header.safe {
+            background: linear-gradient(135deg, #00AA00 0%, #006600 100%);
+        }
+
+        .alert-header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .alert-header p {
+            font-size: 14px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .verdict-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .verdict-box.phishing {
+            background: #FFE5E5;
+            border-left: 4px solid #FF0000;
+            color: #CC0000;
+        }
+
+        .verdict-box.medium {
+            background: #FFF3E0;
+            border-left: 4px solid #FFA500;
+            color: #E65100;
+        }
+
+        .verdict-box.safe {
+            background: #E8F5E9;
+            border-left: 4px solid #00AA00;
+            color: #2E7D32;
+        }
+
+        .url-display {
+            background: #F5F5F5;
+            padding: 12px;
+            border-radius: 6px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .confidence-section {
+            margin-bottom: 20px;
+        }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .confidence-bar {
+            background: #E0E0E0;
+            border-radius: 8px;
+            height: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #confidenceFill {
+            height: 100%;
+            background: linear-gradient(90deg, #00AA00, #006600);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            transition: width 0.3s ease;
+            min-width: 30px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: #F9F9F9;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .detail-value.critical {
+            color: #FF0000;
+        }
+
+        .detail-value.warning {
+            color: #FFA500;
+        }
+
+        .detail-value.safe {
+            color: #00AA00;
+        }
+
+        .assessment {
+            background: #FFFACD;
+            border-left: 4px solid #FFD700;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .indicators-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .indicators-list {
+            list-style: none;
+        }
+
+        .indicator-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .indicator-item.critical {
+            background: #FFE5E5;
+            border-left: 4px solid #FF0000;
+            color: #CC0000;
+        }
+
+        .indicator-item.warning {
+            background: #FFF3E0;
+            border-left: 4px solid #FFA500;
+            color: #E65100;
+        }
+
+        .indicator-item.safe {
+            background: #E8F5E9;
+            border-left: 4px solid #00AA00;
+            color: #2E7D32;
+        }
+
+        .indicator-icon {
+            min-width: 20px;
+            font-weight: 700;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close {
+            background: #FF0000;
+            color: white;
+        }
+
+        .btn-close:hover {
+            background: #CC0000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+
+        #proceedBtn {
+            background: #FFA500;
+            color: white;
+            display: none;
+        }
+
+        #proceedBtn:hover {
+            background: #FF8800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+        }
+
+        .footer {
+            background: #F5F5F5;
+            padding: 12px 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        @media (max-width: 600px) {
+            .alert-header {
+                padding: 20px;
+            }
+
+            .alert-header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="alert-header" id="alertHeader">
+            <h1 id="headerTitle">🛡️ ANALYZING...</h1>
+            <p id="headerSubtitle">Please wait while we analyze this URL...</p>
+        </div>
+
+        <div class="content">
+            <div class="verdict-box" id="verdictBox">
+                ⏳ ANALYZING
+            </div>
+
+            <div class="url-display" id="urlDisplay">
+                Loading URL...
+            </div>
+
+            <div class="confidence-section">
+                <div class="confidence-label">
+                    <span>Risk Confidence</span>
+                    <span id="confidencePercent">0%</span>
+                </div>
+                <div class="confidence-bar">
+                    <div id="confidenceFill" style="width: 0%">0%</div>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value" id="riskLevel">UNKNOWN</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Threats Detected</div>
+                    <div class="detail-value" id="threatsCount">0</div>
+                </div>
+            </div>
+
+            <div class="assessment" id="assessmentBox">
+                Analyzing your URL. Please wait...
+            </div>
+
+            <div class="indicators-section">
+                <h3>🔍 Security Indicators</h3>
+                <ul class="indicators-list" id="indicatorsList">
+                    <li class="indicator-item safe">
+                        <span class="indicator-icon">⏳</span>
+                        <span>Analyzing...</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-close" onclick="window.close()">
+                    🔴 Close & Go Back
+                </button>
+                <button id="proceedBtn" onclick="window.close()">
+                    ⚠️ I Understand, Proceed Anyway
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            🛡️ Phishing Detector with Explainable AI (XAI) | Analysis Engine: Rule-Based Detection
+        </div>
+    </div>
+
+    <script src="popup-alert.js"></script>
+</body>
+</html>
