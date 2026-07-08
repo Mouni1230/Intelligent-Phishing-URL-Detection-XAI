@@ -116,14 +116,6 @@ LIME explains individual predictions by highlighting the most influential featur
 
 ---
 
-## 📸 Screenshots
-
-Add screenshots of:
-- Home Page
-- Chrome Extension
-- Prediction Result
-- SHAP Explanation
-- LIME Explanation
 
 ---
 
